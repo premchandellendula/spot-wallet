@@ -1,6 +1,6 @@
 interface IButton {
-    variant: "primary" | "secondary",
-    size: "sm" | "md" | "lg" | "xl";
+    variant: "primary" | "secondary" | "special",
+    size: "xs" | "sm" | "md" | "lg" | "xl";
     type: "submit" | "reset" | "button" | undefined,
     text: string,
     width: "auto" | "full",
@@ -10,11 +10,13 @@ interface IButton {
 }
 
 const variantStyles = {
-    "primary": "bg-white text-black hover:bg-gray-200",
-    "secondary": "bg-black text-white hover:bg-gray-950"
+    "primary": "dark:bg-white dark:text-black dark:hover:bg-gray-200 bg-black text-white hover:bg-gray-950",
+    "secondary": "dark:text-white text-white dark:hover:bg-gray-950 hover:bg-gray-200",
+    "special": "bg-red-600 text-white hover:bg-red-500"
 }
 
 const sizeVariants = {
+    "xs": "px-3 py-1.5 text-sm",
     "sm": "px-3.5 py-2",
     "md": "px-3.5 py-3",
     "lg": "md:px-4.5 px-3.5 md:py-3 py-2",
@@ -31,7 +33,7 @@ const Button = ({ loading = false, ...props}: IButton) => {
         <button 
             onClick={props.onClick}
             type={props.type}
-            className={`flex justify-center items-center gap-2 ${widthVariants[props.width]} ${sizeVariants[props.size]} ${variantStyles[props.variant]} bg- text-lg rounded-lg ${props.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+            className={`flex justify-center items-center gap-2 ${widthVariants[props.width]} ${sizeVariants[props.size]} ${variantStyles[props.variant]} text-lg rounded-lg ${props.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         >
             { props.text }
         </button>

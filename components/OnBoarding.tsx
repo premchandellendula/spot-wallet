@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Spot from './icons/Spot';
 import Button from './ui/Button';
 import SecurityInstructions from './onborading/SecurityInstructions';
@@ -18,33 +18,74 @@ export interface CoinKeyPair {
     path: string;
     publicKey: string;
     privateKey: string;
+    balance: number
 }  
 
 interface Wallet {
     mnemonic: string;
-    keys: CoinKeyPair[]
+    keys: CoinKeyPair[];
+    balance: number
 }
 const OnBoarding = () => {
     const [step, setStep] = useState(0)
     const [wallets, setWallets] = useState<Wallet[]>([])
-    const [pathTypes, setPathTypes] = useState<string[]>(["501", "60", "0"])
-    const [mnemonicInput, setmnemonicInput] = useState<string>("")
+    const [pathTypes, setPathTypes] = useState<string[]>(["501", "60"])
+    const [mnemonicInput, setMnemonicInput] = useState<string>("")
     const [mnemonicWords, setMnemonicWords] = useState<string[]>(Array(12).fill(" "))
 
     const next = () => setStep(step + 1);
     const back = () => setStep(step - 1);
 
+    useEffect(() => {
+        const storedWallets = localStorage.getItem("wallets");
+        const storedMnemonic = localStorage.getItem("mnemonics");
+        const storedPathTypes = localStorage.getItem("paths");
+        if (storedWallets && storedMnemonic && storedPathTypes) {
+            setMnemonicWords(JSON.parse(storedMnemonic));
+            setWallets(JSON.parse(storedWallets));
+            setPathTypes(JSON.parse(storedPathTypes));
+            // setStep(3)
+        }
+    }, []);
+
+    useEffect(() => {
+        const currentWallets = localStorage.getItem("wallets")
+
+        if(currentWallets){
+            setStep(3)
+        }
+    }, [])
+
+    const handleWalletsDelete = () => {
+        setWallets([])
+        setStep(0)
+        localStorage.setItem("wallets", JSON.stringify([]));
+        toast.success("Wallets deleted successfully!");
+    }
+
+    const handleWalletDelete = (index: number) => {
+        const updatedWallets = wallets.filter((_, i) => i !== index)
+        setWallets(updatedWallets)
+
+        if(updatedWallets.length == 0) setStep(0)
+
+        localStorage.setItem("wallets", JSON.stringify(updatedWallets));
+        toast.success("Wallet deleted successfully!");
+    }
+
     const createWalletFromMnemonic = (
-        pathTypes: string[], 
+        pathTypess: string[], 
         mnemonic: string, 
         accountIndex: number
     ): Wallet | null => {
         try {
             const seed = mnemonicToSeedSync(mnemonic)
             const keys: CoinKeyPair[] = [];
+            const balance = 0
 
-            for(let i=0;i<pathTypes.length;i++){
-                const coinType = pathTypes[i];
+            for(let i=0;i<pathTypess.length;i++){
+                const coinType = pathTypess[i];
+                // console.log(coinType)
                 let path = "";
                 let publicKeyEncoded: string;
                 let privateKeyEncoded: string;
@@ -63,7 +104,8 @@ const OnBoarding = () => {
                             coinType,
                             path,
                             privateKey: privateKeyEncoded,
-                            publicKey: publicKeyEncoded
+                            publicKey: publicKeyEncoded,
+                            balance: 0
                         })
                         break;
                     
@@ -80,7 +122,8 @@ const OnBoarding = () => {
                             coinType,
                             path,
                             privateKey: privateKey,
-                            publicKey: address
+                            publicKey: address,
+                            balance: 0
                         })
                         break;
                     
@@ -104,11 +147,12 @@ const OnBoarding = () => {
                         throw new Error(`Unsupported coin type: ${coinType}`);
                 }
 
-                return {
-                    mnemonic,
-                    keys
-                };
             }
+            return {
+                mnemonic,
+                keys,
+                balance
+            };
         }catch(err) {
             toast.error("Failed to generate wallet. Please try again.");
             return null;
@@ -131,6 +175,7 @@ const OnBoarding = () => {
         setMnemonicWords(words)
 
         const wallet = createWalletFromMnemonic(pathTypes, mnemonic, wallets.length)
+        console.log(wallet)
 
         if (wallet) {
             const updatedWallets = [...wallets, wallet];
@@ -142,31 +187,44 @@ const OnBoarding = () => {
         }
     }
 
+    const copyToClipboard = (content: string) => {
+        navigator.clipboard.writeText(content);
+        toast.success("Copied to clipboard!");
+    };
+
     return (
-        <div className='h-screen bg-zinc-900 flex justify-center items-center'>
-            <div className='max-w-md min-h-60 px-4 py-6 border border-gray-800 rounded-md flex flex-col justify-between'>
-                {step === 0 && <>
-                        <div>
-                            <div className='flex justify-center items-center gap-1 mb-2'>
-                                <Spot size='60px' color='white' />
-                                <h2 className='text-4xl font-semibold'>Spot</h2>
+        <div className='h-screen dark:bg-zinc-900 flex justify-center items-center'>
+            {step === 0 && <>
+                <div className='max-w-md min-h-60 px-4 py-6 border border-gray-800 rounded-md flex flex-col justify-between'>
+                            <div>
+                                <div className='flex justify-center items-center gap-1 mb-2'>
+                                    <Spot size='60px' />
+                                    <h2 className='text-4xl font-semibold'>Spot</h2>
+                                </div>
+                                <p className='text-center text-gray-400 text-lg'>Create a new wallet to get started.</p>
                             </div>
-                            <p className='text-center text-gray-400 text-lg'>Create a new wallet to get started.</p>
-                        </div>
 
-                        <div>
-                            <Button type='button' size='sm' text='Create a wallet' width='full' variant='primary' onClick={next} />
-                        </div>
-                    </> 
-                }
+                            <div>
+                                <Button type='button' size='sm' text='Create a wallet' width='full' variant='primary' onClick={next} />
+                            </div>
+                </div>
+                </> 
+            }
 
-                {step === 1 && <SecurityInstructions next={next} back={back} handleGenerateWallet={handleGenerateWallet} />}
-
-                {step === 2 && <SecretPhrase mnemonicWords={mnemonicWords} next={next} />}
-
-                {step === 3 && <UserWallet  />}
-            </div>
+            {step === 1 &&
+                <div className='max-w-md min-h-60 px-4 py-6 border border-gray-800 rounded-md flex flex-col justify-between'>
+                    <SecurityInstructions next={next} back={back} handleGenerateWallet={handleGenerateWallet} />
+                </div>
+            }
+            {step === 2 &&
+                <div className='max-w-md min-h-60 px-4 py-6 border border-gray-800 rounded-md flex flex-col justify-between'>
+                    <SecretPhrase mnemonicWords={mnemonicWords} next={next} />
+                </div>
+            }
+            
+            {step >= 3 && <UserWallet handleGenerateWallet={handleGenerateWallet} handleWalletsDelete={handleWalletsDelete} wallets={wallets} setWallets={setWallets} handleWalletDelete={handleWalletDelete}  />}
         </div>
+
     )
 }
 
