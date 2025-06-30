@@ -20,13 +20,13 @@ const Sidebar = () => {
     }, [])
 
     const copyToClipboard = (content: string) => {
-            navigator.clipboard.writeText(content);
-            toast.success("Copied to clipboard!");
-        };
+        navigator.clipboard.writeText(content);
+        toast.success("Copied to clipboard!");
+    };
     return (
-        <div className='w-18 relative h-screen border-r border-gray-200 dark:border-gray-800 py-4.5 flex flex-col justify-between'>
+        <div className='w-18 relative border-r border-gray-200 dark:border-gray-800 py-4.5 flex flex-col justify-between'>
             <div className='flex items-center justify-center'>
-                <Spot size='38px' />
+                <Spot />
             </div>
 
             <div className='flex flex-col items-center'>
@@ -39,7 +39,7 @@ const Sidebar = () => {
 
             {isDialogOpen && 
                 <div className='fixed inset-0 min-h-screen w-full flex justify-center items-center z-100 bg-black/80'>
-                    <div className='bg-white dark:bg-zinc-900 w-[70%] mx-auto p-6 rounded-lg'>
+                    <div className='bg-white dark:bg-zinc-900 w-[90%] md:w-[70%] mx-auto p-6 rounded-lg'>
                         <div className='flex justify-between mb-6'>
                             <h2 className='text-2xl md:text-3xl font-bold'>Your Secret Phrase</h2>
                             <CrossIcon onClick={() => {
