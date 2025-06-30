@@ -1,9 +1,6 @@
 import { Vault } from 'lucide-react'
 import React from 'react'
 
-interface ISpot {
-    size: string,
-}
 const Spot = () => {
     return (
         <div>
