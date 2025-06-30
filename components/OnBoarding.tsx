@@ -195,21 +195,16 @@ const OnBoarding = () => {
         }
     }
 
-    const copyToClipboard = (content: string) => {
-        navigator.clipboard.writeText(content);
-        toast.success("Copied to clipboard!");
-    };
-
     return (
         <div className='h-screen dark:bg-zinc-900 flex justify-center items-center'>
             {step === 0 && !importWallet && <>
-                <div className='min-w-md min-h-76 px-4 py-6 border border-gray-300 dark:border-gray-800 rounded-md flex flex-col justify-between'>
+                <div className='w-80 md:min-w-md min-h-76 px-4 py-6 border border-gray-300 dark:border-gray-800 rounded-md flex flex-col justify-between'>
                     <div>
                         <div className='flex justify-center items-center gap-1 mb-2'>
-                            <Spot size='60px' />
-                            <h2 className='text-4xl font-semibold'>Spot</h2>
+                            <Spot />
+                            <h2 className='text-3xl md:text-4xl font-semibold'>Spot</h2>
                         </div>
-                        <p className='text-center text-gray-700 dark:text-gray-400 text-lg'>Create a new wallet to get started.</p>
+                        <p className='text-center text-gray-700 dark:text-gray-400 text-base md:text-lg'>Create a new wallet to get started.</p>
                     </div>
 
                     <div>
@@ -222,7 +217,7 @@ const OnBoarding = () => {
                 </>
             }
             {importWallet && 
-                <div className='min-w-lg min-h-60 w-[60%] px-4 py-6 border border-gray-300 dark:border-gray-800 rounded-md flex flex-col justify-between'>
+                <div className='md:min-w-lg min-h-60 w-[95%] md:w-[60%] px-4 py-6 border border-gray-300 dark:border-gray-800 rounded-md flex flex-col justify-between'>
                     <div>
                         <h2 className='text-2xl font-semibold text-center mb-4'>Import Wallet</h2>
                         <p className='text-gray-700 dark:text-gray-400 text-center mb-10'>

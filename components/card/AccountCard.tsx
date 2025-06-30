@@ -32,10 +32,51 @@ const AccountCard = ({wallet, index, handleWalletDelete}: {wallet: Wallet, index
     const [isSolPrivKeyVisible, setIsSolPrivKeyVisible] = useState(false)
     const [isEthPrivKeyVisible, setIsEthPrivKeyVisible] = useState(false)
 
-    const copyToClipboard = (content: string) => {
-        navigator.clipboard.writeText(content);
-        toast.success("Copied to clipboard!");
-    };
+    // const copyToClipboard = (content: string) => {
+    //     if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+    //         navigator.clipboard.writeText(content);
+    //         toast.success("Copied to clipboard!");
+    //     } else {
+    //         toast.error("Clipboard API not supported!");
+    //     }
+    // };
+
+    async function copyToClipboard(content: string) {
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(content);
+                // console.log('Text copied to clipboard successfully');
+                toast.success("Copied to clipboard!");
+                return true;
+            } else {
+                const textArea = document.createElement('textarea');
+                textArea.value = content;
+                textArea.style.position = 'fixed';
+                textArea.style.opacity = '0';
+                textArea.style.left = '-9999px';
+                
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textArea);
+            
+                if (successful) {
+                    console.log('Text copied to clipboard successfully (fallback)');
+                    toast.success("Copied to clipboard!");
+                    return true;
+                } else {
+                    throw new Error('Copy command failed');
+                    toast.error("Clipboard API not supported!");
+                }
+            }
+        } catch (error) {
+            console.error('Failed to copy content to clipboard:', error);
+            toast.error("Clipboard API not supported!");
+            return false;
+        }
+    }
     
     return (
         <>
@@ -43,7 +84,7 @@ const AccountCard = ({wallet, index, handleWalletDelete}: {wallet: Wallet, index
                 <div className='w-full relative rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden bg-white dark:bg-zinc-900 shadow-sm hover:shadow-md transition-shadow duration-300 my-6'>
 
                     <div className='flex justify-between items-center p-5 '>
-                        <h2 className='text-2xl font-bold text-zinc-900 dark:text-white'>Wallet {index + 1}</h2>
+                        <h2 className='text-xl md:text-2xl font-bold text-zinc-900 dark:text-white'>Wallet {index + 1}</h2>
                         <div className='flex gap-6'>
                             <Tooltip>
                                 <TooltipTrigger asChild>
@@ -58,29 +99,29 @@ const AccountCard = ({wallet, index, handleWalletDelete}: {wallet: Wallet, index
                     </div>
 
                     <div className='dark:bg-zinc-800 bg-zinc-100 rounded-lg p-5'>
-                        <div className='flex justify-between items-center mb-6'>
-                            <h3 className='text-xl font-semibold text-zinc-700 dark:text-zinc-200'>Public Keys</h3>
-                            <h3 className='text-lg font-semibold text-zinc-800 dark:text-zinc-300'>Balance:{" "}<span className='text-green-500 dark:text-green-400'>${(wallet.balance).toFixed(2)}</span></h3>
+                        <div className='flex flex-col md:flex-row justify-between md:items-center mb-6'>
+                            <h3 className='text-lg md:text-xl font-semibold text-zinc-700 dark:text-zinc-200'>Public Keys</h3>
+                            <h3 className='text-base md:text-lg font-semibold text-zinc-800 dark:text-zinc-300'>Balance:{" "}<span className='text-green-500 dark:text-green-400'>${(wallet.balance).toFixed(2)}</span></h3>
                         </div>
 
                         <div className='flex flex-col gap-4 my-5'>
-                            <div className='flex justify-between items-center'>
+                            <div className='flex flex-col md:flex-row gap-2 md:gap-0 justify-between md:items-center'>
                                 <div className="flex items-center gap-2">
                                     <Solana />
                                     <span className="text-base font-medium text-zinc-800 dark:text-zinc-100">Solana</span>
                                 </div>
                                 <div onClick={() => copyToClipboard(wallet.keys[0].publicKey)} className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 text-base cursor-pointer">
-                                    <span className='dark:text-gray-200 text-gray-900'>{wallet.keys[0].publicKey}</span>
+                                    <span className='dark:text-gray-200 text-gray-900 block truncate max-w-xs sm:max-w-none'>{wallet.keys[0].publicKey}</span>
                                     <CopyIcon />
                                 </div>
                             </div>
-                            <div className='flex justify-between items-center'>
+                            <div className='flex flex-col md:flex-row gap-2 md:gap-0 justify-between md:items-center'>
                                 <div className="flex items-center gap-2">
                                     <Ethereum />
                                     <span className="text-base font-medium text-zinc-800 dark:text-zinc-100">Ethereum</span>
                                 </div>
                                 <div onClick={() => copyToClipboard(wallet.keys[1].publicKey)} className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 text-base cursor-pointer">
-                                    <span className='dark:text-gray-200 text-gray-900'>{wallet.keys[1].publicKey}</span>
+                                    <span className='dark:text-gray-200 text-gray-900 block truncate max-w-xs sm:max-w-none'>{wallet.keys[1].publicKey}</span>
                                     <CopyIcon />
                                 </div>
                             </div>
@@ -132,13 +173,13 @@ const AccountCard = ({wallet, index, handleWalletDelete}: {wallet: Wallet, index
                         </div>
 
                         <div className='flex flex-col gap-4 my-5'>
-                            <div className='flex justify-between items-center'>
+                            <div className='flex flex-col md:flex-row gap-2 md:gap-0 justify-between md:items-center'>
                                 <div className="flex items-center gap-2">
                                     <Solana />
                                     <span className="text-base font-medium text-zinc-800 dark:text-zinc-100">Solana</span>
                                 </div>
                                 <div  className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 text-base cursor-pointer">
-                                    <span onClick={() => copyToClipboard(wallet.keys[0].privateKey)} className='dark:text-gray-200 text-gray-900'>
+                                    <span onClick={() => copyToClipboard(wallet.keys[0].privateKey)} className='dark:text-gray-200 text-gray-900 block truncate max-w-xs sm:max-w-none'>
                                         {isSolPrivKeyVisible ? wallet.keys[0].privateKey : "•".repeat(wallet.mnemonic.length)}
                                     </span>
 
@@ -151,18 +192,18 @@ const AccountCard = ({wallet, index, handleWalletDelete}: {wallet: Wallet, index
                                     </button>
                                 </div>
                             </div>
-                            <div className='flex justify-between items-center'>
+                            <div className='flex flex-col md:flex-row gap-2 md:gap-0 justify-between md:items-center'>
                                 <div className="flex items-center gap-2">
                                     <Ethereum />
                                     <span className="text-base font-medium text-zinc-800 dark:text-zinc-100">Ethereum</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 text-base cursor-pointer">
-                                    <span onClick={() => copyToClipboard(wallet.keys[1].privateKey)} className='dark:text-gray-200 text-gray-900'>
+                                    <span onClick={() => copyToClipboard(wallet.keys[1].privateKey)} className='dark:text-gray-200 text-gray-900 block truncate max-w-xs sm:max-w-none'>
                                         {isEthPrivKeyVisible ? wallet.keys[1].privateKey : "•".repeat(wallet.mnemonic.length)}
                                     </span>
                                     
                                     <button onClick={() => setIsEthPrivKeyVisible(!isEthPrivKeyVisible)} className='cursor-pointer'>
-                                        {isSolPrivKeyVisible ? (
+                                        {isEthPrivKeyVisible ? (
                                             <EyeOff className="size-4" />
                                             ) : (
                                             <Eye className="size-4" />

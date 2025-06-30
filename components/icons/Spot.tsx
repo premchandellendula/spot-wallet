@@ -4,10 +4,10 @@ import React from 'react'
 interface ISpot {
     size: string,
 }
-const Spot = ({size}: ISpot) => {
+const Spot = () => {
     return (
         <div>
-            <Vault size={size} className='text-black dark:text-white' />
+            <Vault className='text-black w-12 h-12 md:w-14 md:h-14 dark:text-white' />
         </div>
     )
 }

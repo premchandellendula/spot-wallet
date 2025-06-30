@@ -8,8 +8,8 @@ const SecretPhrase = ({mnemonicWords, next}: {mnemonicWords: string[], next: () 
     return (
         <div className='max-w-lg mx-auto px-2'>
             <div className='flex flex-col gap-3 items-center mb-4'>
-                <h2 className='text-3xl font-semibold'>Secret Recovery Phrase</h2>
-                <p className='text-yellow-700 dark:text-yellow-400 text-center text-sm'>This phrase is the ONLY way to recover your wallet. DO NOT share it with anyone.</p>
+                <h2 className='text-2xl md:text-3xl font-semibold'>Secret Recovery Phrase</h2>
+                <p className='text-yellow-700 dark:text-yellow-400 text-center text-[0.8rem] md:text-sm'>This phrase is the ONLY way to recover your wallet. DO NOT share it with anyone.</p>
             </div>
 
             <label className="flex items-start space-x-2 mb-4 cursor-pointer">
