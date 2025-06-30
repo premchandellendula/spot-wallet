@@ -1,7 +1,7 @@
 
 import { Settings } from 'lucide-react'
 import React from 'react'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 
 const SettingsIcon = ({onClick}: {onClick: () => void}) => {
     return (

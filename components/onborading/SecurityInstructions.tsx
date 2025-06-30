@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import ExclamationTrianlgeIcon from '../icons/ExclamationTrianlgeIcon'
 import LockIcon from '../icons/LockIcon'
 import WarningIcon from '../icons/WarningIcon'
 import Button from '../ui/Button'
