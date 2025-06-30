@@ -10,34 +10,34 @@ const SecurityInstructions = ({next, back, handleGenerateWallet}: {next: () => v
     return (
         <div>
             <Back onClick={back} />
-            <h2 className="text-3xl font-bold text-center mb-2">Security Instructions</h2>
+            <h2 className="text-3xl font-bold text-center mb-3">Security Instructions</h2>
             <div className='w-[85%] mx-auto'>
-                <p className="text-gray-400 mb-4 text-[0.8rem] text-center">
+                <p className="text-gray-600 dark:text-gray-400 mb-6 text-[0.8rem] text-center">
                     Your Secret Recovery Phrase is the key to your wallet. It’s the only way to restore your funds if you lose access.
                 </p>
 
-                <div className="flex items-center gap-1 bg-gray-800 rounded p-3 mb-3">
+                <div className="flex items-center gap-1 bg-gray-200 dark:bg-gray-800 rounded p-3 mb-3">
                     <span className='text-xl'><WarningIcon /></span>
-                    <p className="text-sm text-gray-400">
-                    Never <span className='text-white uppercase'>share</span> your secret phrase with anyone. Spot will never ask for it.
+                    <p className="text-sm text-gray-900 dark:text-gray-400">
+                    Never <span className='text-black font-semibold dark:text-white uppercase'>share</span> your secret phrase with anyone. Spot will never ask for it.
                     </p>
                 </div>
 
-                <div className="flex items-center justify-center gap-1 bg-gray-800 rounded p-3 mb-5">
+                <div className="flex items-center justify-center gap-1 bg-gray-200 dark:bg-gray-800 rounded p-3 mb-5">
                     <span className='text-xl'><LockIcon /></span>
-                    <p className="text-sm text-gray-400">
-                        Write it down and keep it <span className='text-white uppercase'>safe</span>.  Anyone with your phrase can steal your assets.
+                    <p className="text-sm text-gray-900 dark:text-gray-400">
+                        Write it down and keep it <span className='text-black font-semibold dark:text-white uppercase'>safe</span>.  Anyone with your phrase can steal your assets.
                     </p>
                 </div>
 
-                <label className="flex items-start space-x-2 mb-4">
+                <label className="flex items-start space-x-2 mb-4 mt-10">
                     <input
                         type="checkbox"
                         checked={checked}
                         onChange={(e) => setChecked(e.target.checked)}
                         className="w-4 h-4 mt-1"
                     />
-                    <span className="text-gray-200">
+                    <span className="text-gray-700 dark:text-gray-200">
                         I understand the risks and have saved my secret phrase.
                     </span>
                 </label>

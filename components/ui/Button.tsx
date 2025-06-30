@@ -11,7 +11,7 @@ interface IButton {
 
 const variantStyles = {
     "primary": "dark:bg-white dark:text-black dark:hover:bg-gray-200 bg-black text-white hover:bg-gray-950",
-    "secondary": "dark:text-white text-white dark:hover:bg-gray-950 hover:bg-gray-200",
+    "secondary": "text-black bg-gray-200 border border-gray-300 dark:border-gray-900 dark:text-white dark:bg-black dark:hover:bg-gray-950 hover:bg-gray-300/70",
     "special": "bg-red-600 text-white hover:bg-red-500"
 }
 
@@ -25,7 +25,7 @@ const sizeVariants = {
 
 const widthVariants = {
     "auto": "w-auto",
-    "full": "w-full mt-4 m-auto"
+    "full": "w-full mt-2 m-auto"
 }
 
 const Button = ({ loading = false, ...props}: IButton) => {
