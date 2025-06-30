@@ -32,6 +32,7 @@ const OnBoarding = () => {
     const [pathTypes, setPathTypes] = useState<string[]>(["501", "60"])
     const [mnemonicInput, setMnemonicInput] = useState<string>("")
     const [mnemonicWords, setMnemonicWords] = useState<string[]>(Array(12).fill(" "))
+    const [importWallet, setImportWallet] = useState<boolean>(false)
 
     const next = () => setStep(step + 1);
     const back = () => setStep(step - 1);
@@ -59,7 +60,8 @@ const OnBoarding = () => {
     const handleWalletsDelete = () => {
         setWallets([])
         setStep(0)
-        localStorage.setItem("wallets", JSON.stringify([]));
+        localStorage.removeItem("wallets");
+        localStorage.removeItem("mnemonics");
         toast.success("Wallets deleted successfully!");
     }
 
@@ -67,7 +69,11 @@ const OnBoarding = () => {
         const updatedWallets = wallets.filter((_, i) => i !== index)
         setWallets(updatedWallets)
 
-        if(updatedWallets.length == 0) setStep(0)
+        if(updatedWallets.length == 0){
+            setStep(0)
+            localStorage.removeItem("wallets")
+            localStorage.removeItem("mnemonics")
+        }
 
         localStorage.setItem("wallets", JSON.stringify(updatedWallets));
         toast.success("Wallet deleted successfully!");
@@ -162,6 +168,8 @@ const OnBoarding = () => {
 
     const handleGenerateWallet = () => {
         let mnemonic = mnemonicInput.trim()
+        // console.log(mnemonic)
+        // console.log(mnemonicInput)
 
         if(mnemonic){
             if(!validateMnemonic(mnemonic)){
@@ -175,7 +183,7 @@ const OnBoarding = () => {
         setMnemonicWords(words)
 
         const wallet = createWalletFromMnemonic(pathTypes, mnemonic, wallets.length)
-        console.log(wallet)
+        // console.log(wallet)
 
         if (wallet) {
             const updatedWallets = [...wallets, wallet];
@@ -194,35 +202,68 @@ const OnBoarding = () => {
 
     return (
         <div className='h-screen dark:bg-zinc-900 flex justify-center items-center'>
-            {step === 0 && <>
-                <div className='max-w-md min-h-60 px-4 py-6 border border-gray-800 rounded-md flex flex-col justify-between'>
-                            <div>
-                                <div className='flex justify-center items-center gap-1 mb-2'>
-                                    <Spot size='60px' />
-                                    <h2 className='text-4xl font-semibold'>Spot</h2>
-                                </div>
-                                <p className='text-center text-gray-400 text-lg'>Create a new wallet to get started.</p>
-                            </div>
+            {step === 0 && !importWallet && <>
+                <div className='min-w-md min-h-76 px-4 py-6 border border-gray-300 dark:border-gray-800 rounded-md flex flex-col justify-between'>
+                    <div>
+                        <div className='flex justify-center items-center gap-1 mb-2'>
+                            <Spot size='60px' />
+                            <h2 className='text-4xl font-semibold'>Spot</h2>
+                        </div>
+                        <p className='text-center text-gray-700 dark:text-gray-400 text-lg'>Create a new wallet to get started.</p>
+                    </div>
 
-                            <div>
-                                <Button type='button' size='sm' text='Create a wallet' width='full' variant='primary' onClick={next} />
-                            </div>
+                    <div>
+                        <Button type='button' size='sm' text='Create a wallet' width='full' variant='primary' onClick={next} />
+                        <Button type='button' size='sm' text='Import a wallet' width='full' variant='secondary' onClick={() => {
+                            setImportWallet(true)
+                        }} />
+                    </div>
                 </div>
-                </> 
+                </>
+            }
+            {importWallet && 
+                <div className='min-w-lg min-h-60 w-[60%] px-4 py-6 border border-gray-300 dark:border-gray-800 rounded-md flex flex-col justify-between'>
+                    <div>
+                        <h2 className='text-2xl font-semibold text-center mb-4'>Import Wallet</h2>
+                        <p className='text-gray-700 dark:text-gray-400 text-center mb-10'>
+                            Enter your secret recovery phrase to import your existing wallet.
+                        </p>
+                        <input
+                            onChange={(e) => setMnemonicInput(e.target.value)}
+                            className='w-full p-3 rounded border border-gray-300 dark:border-gray-700 bg-transparent text-gray-900 dark:text-gray-100 outline-none'
+                            placeholder='Enter your 12 or 24-word secret phrase here'
+                        />
+                    </div>
+
+                    <div className='flex justify-end mt-2'>
+                        <Button
+                        type='button'
+                        size='sm'
+                        width='auto'
+                        variant='primary'
+                        text='Import Wallet'
+                        onClick={() => {
+                            handleGenerateWallet()
+                            setStep(3);
+                            setImportWallet(false)
+                        }}
+                        />
+                    </div>
+                </div>
             }
 
             {step === 1 &&
-                <div className='max-w-md min-h-60 px-4 py-6 border border-gray-800 rounded-md flex flex-col justify-between'>
+                <div className='max-w-md min-h-60 px-4 py-6 border border-gray-300 dark:border-gray-800 rounded-md flex flex-col justify-between'>
                     <SecurityInstructions next={next} back={back} handleGenerateWallet={handleGenerateWallet} />
                 </div>
             }
             {step === 2 &&
-                <div className='max-w-md min-h-60 px-4 py-6 border border-gray-800 rounded-md flex flex-col justify-between'>
+                <div className='max-w-md min-h-60 px-4 py-6 border border-gray-300 dark:border-gray-800 rounded-md flex flex-col justify-between'>
                     <SecretPhrase mnemonicWords={mnemonicWords} next={next} />
                 </div>
             }
             
-            {step >= 3 && <UserWallet handleGenerateWallet={handleGenerateWallet} handleWalletsDelete={handleWalletsDelete} wallets={wallets} setWallets={setWallets} handleWalletDelete={handleWalletDelete}  />}
+            {step >= 3 && <UserWallet handleGenerateWallet={handleGenerateWallet} handleWalletsDelete={handleWalletsDelete} wallets={wallets} setWallets={setWallets} handleWalletDelete={handleWalletDelete} />}
         </div>
 
     )

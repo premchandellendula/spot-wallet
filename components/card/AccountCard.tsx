@@ -49,7 +49,7 @@ const AccountCard = ({wallet, index, handleWalletDelete}: {wallet: Wallet, index
                                 <TooltipTrigger asChild>
                                     <Lock className='text-zinc-500 cursor-pointer hover:text-green-400' size={"20px"} onClick={() => setIsPrivKeysDialogOpen(true)} />
                                 </TooltipTrigger>
-                                <TooltipContent side="left" className="bg-white text-black rounded px-2 py-2 text-sm">
+                                <TooltipContent side="left" className="text-white bg-black dark:bg-white dark:text-black rounded px-2 py-2 text-sm">
                                     Show Private Keys
                                 </TooltipContent>
                             </Tooltip>
