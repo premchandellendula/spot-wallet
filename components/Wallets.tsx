@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import Button from './ui/Button'
 import AccountCard from './card/AccountCard'
 import Footer from './footer/Footer';
-import { toast } from 'sonner';
-import { Plus, Trash } from 'lucide-react';
 
 export interface CoinKeyPair {
     coinType: string;
