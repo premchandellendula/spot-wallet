@@ -121,7 +121,7 @@ const OnBoarding = () => {
                         const wallet = hdNode.derivePath(path)
                         const privateKey = wallet.privateKey;
 
-                        const publicKey = wallet.publicKey;
+                        // const publicKey = wallet.publicKey;
                         const address = wallet.address;
 
                         keys.push({
@@ -160,10 +160,10 @@ const OnBoarding = () => {
                 balance
             };
         }catch(err) {
+            console.log(err)
             toast.error("Failed to generate wallet. Please try again.");
             return null;
         }
-        return null
     }
 
     const handleGenerateWallet = () => {

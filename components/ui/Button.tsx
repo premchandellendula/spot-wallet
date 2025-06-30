@@ -4,7 +4,6 @@ interface IButton {
     type: "submit" | "reset" | "button" | undefined,
     text: string,
     width: "auto" | "full",
-    loading?: boolean,
     disabled?: boolean,
     onClick?: () => void
 }
@@ -28,7 +27,7 @@ const widthVariants = {
     "full": "w-full mt-2 m-auto"
 }
 
-const Button = ({ loading = false, ...props}: IButton) => {
+const Button = (props: IButton) => {
     return (
         <button 
             onClick={props.onClick}
