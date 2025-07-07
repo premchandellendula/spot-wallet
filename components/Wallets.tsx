@@ -22,10 +22,28 @@ interface IWallets {
     handleWalletsDelete: () => void,
     handleWalletDelete: (index: number) => void,
     wallets: Wallet[],
-    setWallets: (wallets: []) => void
+    setWallets: React.Dispatch<React.SetStateAction<Wallet[]>>
 }
 
 const Wallets = ({handleGenerateWallet, handleWalletsDelete, handleWalletDelete, wallets, setWallets}: IWallets) => {
+
+    const updateWalletBalance = (walletIndex: number, keyIndex: number, balance: number) => {
+        setWallets(prevWallets => {
+            const updatedWallets = [...prevWallets];
+            const updatedKeys = [...updatedWallets[walletIndex].keys];
+            updatedKeys[keyIndex] = {
+                ...updatedKeys[keyIndex],
+                balance
+        };
+
+        updatedWallets[walletIndex] = {
+            ...updatedWallets[walletIndex],
+            keys: updatedKeys
+        };
+
+            return updatedWallets;
+        });
+    };
 
     useEffect(() => {
         const storedWallets = localStorage.getItem("wallets");
@@ -49,7 +67,7 @@ const Wallets = ({handleGenerateWallet, handleWalletsDelete, handleWalletDelete,
             <div className='my-6 flex-1'>
                 {wallets.length > 0 ? (
                     wallets.map((wallet, idx) => (
-                        <AccountCard key={idx} wallet={wallet} index={idx} handleWalletDelete={handleWalletDelete} />
+                        <AccountCard key={idx} wallet={wallet} index={idx} handleWalletDelete={handleWalletDelete} updateWalletBalance={updateWalletBalance} />
                     ))
                     ) : (
                     <p className="text-center text-gray-400">

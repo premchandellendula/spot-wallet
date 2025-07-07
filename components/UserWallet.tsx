@@ -21,7 +21,7 @@ interface IUserWallet {
     handleWalletsDelete: () => void,
     handleWalletDelete: (index: number) => void,
     wallets: Wallet[],
-    setWallets: (wallets: Wallet[]) => void
+    setWallets: React.Dispatch<React.SetStateAction<Wallet[]>>
 }
 
 const UserWallet = ({handleGenerateWallet, handleWalletsDelete, handleWalletDelete, wallets, setWallets}: IUserWallet) => {

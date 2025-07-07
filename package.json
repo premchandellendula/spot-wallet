@@ -9,8 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@pythnetwork/client": "^2.22.1",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@solana/web3.js": "^1.98.2",
+    "axios": "^1.10.0",
     "bip32": "^5.0.0-rc.0",
     "bip39": "^3.1.0",
     "bitcoinjs-lib": "^6.1.7",
