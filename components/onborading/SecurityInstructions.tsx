@@ -3,8 +3,10 @@ import LockIcon from '../icons/LockIcon'
 import WarningIcon from '../icons/WarningIcon'
 import Button from '../ui/Button'
 import Back from '../icons/Back'
+import { useWallet } from '@/other/WalletProvider'
 
-const SecurityInstructions = ({next, back, handleGenerateWallet}: {next: () => void, back: () => void, handleGenerateWallet: () => void}) => {
+const SecurityInstructions = () => {
+    const { handleGenerateWallet, next, back } = useWallet()
     const [checked, setChecked] = useState(false)
     return (
         <div>

@@ -1,10 +1,12 @@
 "use client"
 import React, { useState } from 'react'
 import Button from '../ui/Button'
+import { useWallet } from '@/other/WalletProvider'
 
-const SecretPhrase = ({mnemonicWords, next}: {mnemonicWords: string[], next: () => void}) => {
+const SecretPhrase = () => {
     const [isSecretShown, setIsSecretShown] = useState(false)
     const [isSaved, setIsSaved] = useState(false)
+    const { mnemonicWords, next } = useWallet()
     return (
         <div className='max-w-lg mx-auto px-2'>
             <div className='flex flex-col gap-3 items-center mb-4'>

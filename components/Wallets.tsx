@@ -2,30 +2,11 @@ import React, { useEffect } from 'react'
 import Button from './ui/Button'
 import AccountCard from './card/AccountCard'
 import Footer from './footer/Footer';
+import { useWallet } from '@/other/WalletProvider';
 
-export interface CoinKeyPair {
-    coinType: string;
-    path: string;
-    publicKey: string;
-    privateKey: string;
-    balance: number
-} 
+const Wallets = () => {
 
-interface Wallet {
-    mnemonic: string;
-    keys: CoinKeyPair[];
-    balance: number
-}
-
-interface IWallets {
-    handleGenerateWallet: () => void,
-    handleWalletsDelete: () => void,
-    handleWalletDelete: (index: number) => void,
-    wallets: Wallet[],
-    setWallets: React.Dispatch<React.SetStateAction<Wallet[]>>
-}
-
-const Wallets = ({handleGenerateWallet, handleWalletsDelete, handleWalletDelete, wallets, setWallets}: IWallets) => {
+    const { wallets, setWallets, handleGenerateWallet, handleWalletsDelete } = useWallet()
 
     const updateWalletBalance = (walletIndex: number, keyIndex: number, balance: number) => {
         setWallets(prevWallets => {
@@ -67,7 +48,7 @@ const Wallets = ({handleGenerateWallet, handleWalletsDelete, handleWalletDelete,
             <div className='my-6 flex-1'>
                 {wallets.length > 0 ? (
                     wallets.map((wallet, idx) => (
-                        <AccountCard key={idx} wallet={wallet} index={idx} handleWalletDelete={handleWalletDelete} updateWalletBalance={updateWalletBalance} />
+                        <AccountCard key={idx} wallet={wallet} index={idx} updateWalletBalance={updateWalletBalance} />
                     ))
                     ) : (
                     <p className="text-center text-gray-400">
