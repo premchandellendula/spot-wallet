@@ -6,7 +6,7 @@ import { useWallet } from '@/other/WalletProvider';
 
 const Wallets = () => {
 
-    const { wallets, setWallets, handleGenerateWallet, handleWalletDelete, handleWalletsDelete } = useWallet()
+    const { wallets, setWallets, handleGenerateWallet, handleWalletsDelete } = useWallet()
 
     const updateWalletBalance = (walletIndex: number, keyIndex: number, balance: number) => {
         setWallets(prevWallets => {
