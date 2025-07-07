@@ -11,8 +11,9 @@ import { Eye, EyeOff, Lock } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import CrossIcon from '../icons/CrossIcon'
 import axios from 'axios';
+import { useWallet } from '@/other/WalletProvider'
 
-export interface CoinKeyPair {
+interface CoinKeyPair {
     coinType: string;
     path: string;
     publicKey: string;
@@ -29,15 +30,15 @@ interface Wallet {
 interface AccountCardProps {
     wallet: Wallet;
     index: number;
-    handleWalletDelete: (index: number) => void;
     updateWalletBalance: (walletIndex: number, keyIndex: number, balance: number) => void;
 }
 
-const AccountCard = ({wallet, index, handleWalletDelete, updateWalletBalance}: AccountCardProps) => {
+const AccountCard = ({wallet, index, updateWalletBalance}: AccountCardProps) => {
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);
     const [isPrivKeysDialogOpen, setIsPrivKeysDialogOpen] = useState(false)
     const [isSolPrivKeyVisible, setIsSolPrivKeyVisible] = useState(false)
     const [isEthPrivKeyVisible, setIsEthPrivKeyVisible] = useState(false)
+    const { handleWalletDelete } = useWallet()
 
     async function getEthBalance(publicKey: string){
         const response = await axios.post("https://eth-mainnet.g.alchemy.com/v2/xmfWmD6Zfhe8EwYyxkegghkWIpZn97qx", {
