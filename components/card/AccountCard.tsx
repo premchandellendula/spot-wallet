@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import DeleteIcon from '../icons/DeleteIcon'
 import Solana from '../icons/Solana'
 import Ethereum from '../icons/Ethereum'
@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 import { Eye, EyeOff, Lock } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import CrossIcon from '../icons/CrossIcon'
+import axios from 'axios';
 
 export interface CoinKeyPair {
     coinType: string;
@@ -25,20 +26,60 @@ interface Wallet {
     balance: number
 }
 
-const AccountCard = ({wallet, index, handleWalletDelete}: {wallet: Wallet, index: number, handleWalletDelete: (index: number) => void}) => {
+interface AccountCardProps {
+    wallet: Wallet;
+    index: number;
+    handleWalletDelete: (index: number) => void;
+    updateWalletBalance: (walletIndex: number, keyIndex: number, balance: number) => void;
+}
+
+const AccountCard = ({wallet, index, handleWalletDelete, updateWalletBalance}: AccountCardProps) => {
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);
     const [isPrivKeysDialogOpen, setIsPrivKeysDialogOpen] = useState(false)
     const [isSolPrivKeyVisible, setIsSolPrivKeyVisible] = useState(false)
     const [isEthPrivKeyVisible, setIsEthPrivKeyVisible] = useState(false)
 
-    // const copyToClipboard = (content: string) => {
-    //     if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
-    //         navigator.clipboard.writeText(content);
-    //         toast.success("Copied to clipboard!");
-    //     } else {
-    //         toast.error("Clipboard API not supported!");
-    //     }
-    // };
+    async function getEthBalance(publicKey: string){
+        const response = await axios.post("https://eth-mainnet.g.alchemy.com/v2/xmfWmD6Zfhe8EwYyxkegghkWIpZn97qx", {
+            "id":1,
+            "jsonrpc":"2.0",
+            "method":"eth_getBalance",
+            "params": [publicKey, "latest"]
+        })
+
+        // console.log(response.data.result)
+
+        // console.log(parseInt(response.data.result, 16))
+        const wei = parseInt(response.data.result, 16)
+        const eth = wei / 1e18;
+        // console.log(eth)
+        // return eth;
+        updateWalletBalance(index, 1, eth)
+        console.log(wallet.keys[1])
+    }
+
+    async function getSolBalance(publicKey: string){
+        const response = await axios.post("https://solana-mainnet.g.alchemy.com/v2/xmfWmD6Zfhe8EwYyxkegghkWIpZn97qx", {
+            "id":1,
+            "jsonrpc":"2.0",
+            "method":"getBalance",
+            "params": [publicKey]
+        })
+
+        // console.log(response.data.result)
+        // console.log(response.data.result.value)
+        const lamports = response.data.result.value
+        const sol = lamports / 1e9;
+        // console.log(sol)
+        // return sol;
+        updateWalletBalance(index, 0, sol)
+        console.log(wallet.keys[0])
+    }
+
+    useEffect(() => {
+        getEthBalance(wallet.keys[1].publicKey)
+        getSolBalance(wallet.keys[0].publicKey)
+    }, [])
 
     async function copyToClipboard(content: string) {
         try {
@@ -66,8 +107,8 @@ const AccountCard = ({wallet, index, handleWalletDelete}: {wallet: Wallet, index
                     toast.success("Copied to clipboard!");
                     return true;
                 } else {
-                    throw new Error('Copy command failed');
                     toast.error("Clipboard API not supported!");
+                    throw new Error('Copy command failed');
                 }
             }
         } catch (error) {
@@ -142,7 +183,7 @@ const AccountCard = ({wallet, index, handleWalletDelete}: {wallet: Wallet, index
                                         <Solana />
                                         <span className="text-lg font-semibold text-zinc-800 dark:text-white">Solana</span>
                                     </div>
-                                    <span className="text-lg font-semibold text-green-500 dark:text-green-400">${(wallet.keys[0].balance).toFixed(2)}</span>
+                                    <span className="text-lg font-semibold text-green-500 dark:text-green-400">{(wallet.keys[0].balance).toFixed(2)}{" "}<span className='text-gray-400 dark:text-gray-500'>sol</span></span>
                                 </div>
 
                                 <div className="flex justify-between items-center">
@@ -150,7 +191,7 @@ const AccountCard = ({wallet, index, handleWalletDelete}: {wallet: Wallet, index
                                         <Ethereum />
                                         <span className="text-lg font-semibold text-zinc-800 dark:text-white">Ethereum</span>
                                     </div>
-                                    <span className="text-lg font-semibold text-green-500 dark:text-green-400">${(wallet.keys[1].balance).toFixed(2)}</span>
+                                    <span className="text-lg font-semibold text-green-500 dark:text-green-400">{(wallet.keys[1].balance).toFixed(2)}{" "}<span className='text-gray-400 dark:text-gray-500'>eth</span></span>
                                 </div>
                             </div>
                         }
